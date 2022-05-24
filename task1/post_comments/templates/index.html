@@ -1,0 +1,44 @@
+{%extends 'base.html'%}
+{%block title%}
+<title>Post | Home</title>
+<link rel="icon" href="/static/home.png">
+{%endblock%}
+{%block body%}
+{%load humanize%}
+<div class="container my-3">
+    <h2>Coding Articles by Monil</h2>
+    {% for item in myposts %}
+    <div
+        class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 my-4 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+            <strong class="d-inline-block mb-2 text-primary">Article by {{item.author}}</strong>
+            <h3 class="mb-0"><a class="text-dark" href="/post/{{item.post_id}}">{{item.title}} </a> </h3>
+            <div class="mb-1 text-muted">{{item.pub_date}}</div>
+            <p class="card-text mb-auto">
+            <div class="preview"> {{item.content|safe| truncatechars:500}}</div>
+            </p>
+            <div class="my-2">
+                <a href="/post/{{item.post_id}}" role="button" class="btn btn-primary">Continue reading <i class="	far fa-hand-point-right"></i></a>
+            </div>
+            <strong>{{item.liked.all.count}} likes</strong>
+            {% if user.is_authenticated %}
+            <form action="/like/" method="post">
+                {%csrf_token%}
+                <input type="hidden" name="post_id" value="{{item.post_id}}">
+                {%if user not in item.liked.all%}
+                    <button class="btn btn-success" type="submit"><i class="fas fa-thumbs-up"></i> Like</button>
+                {%else%}
+                <button class="btn btn-danger" type="submit"><i class="fas fa-thumbs-down"></i> Unlike</button>
+                {%endif%}
+            </form>
+            {%else%}
+            Please Login to like/Unlike post
+            {%endif%}            
+
+        </div>
+    </div>
+
+    {% endfor %}
+</div>
+</div>
+{%endblock%}
